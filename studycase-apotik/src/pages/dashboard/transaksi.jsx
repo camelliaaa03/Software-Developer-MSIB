@@ -1,20 +1,50 @@
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardHeader,
   CardBody,
   Typography,
   Button,
-} from "@material-tailwind/react";
-import { Link } from "react-router-dom"
+} from '@material-tailwind/react';
+import { MinusCircleIcon } from "@heroicons/react/24/outline";
+import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export function Transaksi() {
+  const [orderData, setOrderData] = useState([]);
+
+  useEffect(() => {
+    const fetchOrderData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/api/order');
+        setOrderData(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchOrderData();
+  }, []);
+
+  const handleDelete = async (orderId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/order/${orderId}`);
+      setOrderData(orderData.filter((order) => order.id !== orderId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="mt-12 mb-8 flex flex-col gap-12">
-      <div class="basis-1/2 hover:basis-1/2">
-      <Link to="/form/formTransaksi"><Button>Tambah Data</Button></Link>
+    <div className="mt-8 mb-8 flex flex-col gap-12">
+      <div className="basis-1/2 hover:basis-1/2">
+        <Link to="/form/formTransaksi">
+          <Button>Tambah Data</Button>
+        </Link>
       </div>
       <Card>
-        <CardHeader variant="gradient" color="blue" className="mb-8 p-6">
+        <CardHeader variant="gradient" color="blue" className="mb-5 p-4">
           <Typography variant="h6" color="white">
             Rekap Transaksi
           </Typography>
@@ -23,102 +53,59 @@ export function Transaksi() {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["No", "Invoice", "Tanggal", "Customer", "Jml Item", "Total"].map(
-                  (el) => (
-                    <th
-                      key={el}
-                      className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                {['Id', 'Tanggal', 'Customer', 'Jml Item', 'Total', 'Action'].map((el) => (
+                  <th
+                    key={el}
+                    className="border-b border-blue-gray-50 py-3 px-5 text-left"
+                  >
+                    <Typography
+                      variant="small"
+                      className="text-[11px] font-bold uppercase text-blue-gray-400"
                     >
-                      <Typography
-                        variant="small"
-                        className="text-[11px] font-bold uppercase text-blue-gray-400"
-                      >
-                        {el}
-                      </Typography>
-                    </th>
-                  )
-                )}
+                      {el}
+                    </Typography>
+                  </th>
+                ))}
               </tr>
             </thead>
-            {/* <tbody>
-              {projectsTableData.map(
-                ({ img, name, members, budget, completion }, key) => {
-                  const className = `py-3 px-5 ${
-                    key === projectsTableData.length - 1
-                      ? ""
-                      : "border-b border-blue-gray-50"
-                  }`;
-
-                  return (
-                    <tr key={name}>
-                      <td className={className}>
-                        <div className="flex items-center gap-4">
-                          <Avatar src={img} alt={name} size="sm" />
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-bold"
-                          >
-                            {name}
-                          </Typography>
-                        </div>
-                      </td>
-                      <td className={className}>
-                        {members.map(({ img, name }, key) => (
-                          <Tooltip key={name} content={name}>
-                            <Avatar
-                              src={img}
-                              alt={name}
-                              size="xs"
-                              variant="circular"
-                              className={`cursor-pointer border-2 border-white ${
-                                key === 0 ? "" : "-ml-2.5"
-                              }`}
-                            />
-                          </Tooltip>
-                        ))}
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          variant="small"
-                          className="text-xs font-medium text-blue-gray-600"
-                        >
-                          {budget}
-                        </Typography>
-                      </td>
-                      <td className={className}>
-                        <div className="w-10/12">
-                          <Typography
-                            variant="small"
-                            className="mb-1 block text-xs font-medium text-blue-gray-600"
-                          >
-                            {completion}%
-                          </Typography>
-                          <Progress
-                            value={completion}
-                            variant="gradient"
-                            color={completion === 100 ? "green" : "blue"}
-                            className="h-1"
-                          />
-                        </div>
-                      </td>
-                      <td className={className}>
-                        <Typography
-                          as="a"
-                          href="#"
-                          className="text-xs font-semibold text-blue-gray-600"
-                        >
-                          <EllipsisVerticalIcon
-                            strokeWidth={2}
-                            className="h-5 w-5 text-inherit"
-                          />
-                        </Typography>
-                      </td>
-                    </tr>
-                  );
-                }
-              )}
-            </tbody> */}
+            <tbody>
+              {orderData.map((order, index) => (
+                <tr key={order.id}>
+                  {/* <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td> */}
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{order.id}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {format(new Date(order.createdAt), 'dd/MM/yyyy')}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{order.customerName}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{order.productCount}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {order.total.toLocaleString('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                      })}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl ml-2"
+                    onClick={() => handleDelete(order.id)}
+                  >
+                    <MinusCircleIcon strokeWidth={2} className="h-5 w-5" />
+                  </button>
+                  </td>
+                  
+                </tr>
+              ))}
+            </tbody>
           </table>
         </CardBody>
       </Card>

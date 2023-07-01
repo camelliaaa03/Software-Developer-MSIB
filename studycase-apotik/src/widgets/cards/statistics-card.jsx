@@ -27,7 +27,12 @@ export function StatisticsCard({ color, icon, title, value, footer }) {
       </CardBody>
       {footer && (
         <CardFooter className="border-t border-blue-gray-50 p-4">
-          {footer}
+          <Typography variant="small" color={footer.color} className="mr-2">
+            {footer.value}
+          </Typography>
+          <Typography variant="small" color="blue-gray">
+            {footer.label}
+          </Typography>
         </CardFooter>
       )}
     </Card>
@@ -65,7 +70,11 @@ StatisticsCard.propTypes = {
   icon: PropTypes.node.isRequired,
   title: PropTypes.node.isRequired,
   value: PropTypes.node.isRequired,
-  footer: PropTypes.node,
+  footer: PropTypes.shape({
+    color: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  }),
 };
 
 StatisticsCard.displayName = "/src/widgets/cards/statistics-card.jsx";

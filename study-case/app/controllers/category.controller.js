@@ -68,28 +68,38 @@ exports.findOne = (req, res) => {
 exports.update = (authJwt.isAdmin, async (req, res) => {
     const id = req.params.id;
 
-    Category.update(req.body, {
-            where: {
-                id: id,
-            },
-        })
-        .then(num => {
-            if (num == 1) {
-                res.send({
-                    message: 'Category was updated successfully.',
-                });
+    Category.findByPk(id)
+        .then(category => {
+            if (category) {
+                const previousName = category.name; // Menyimpan nama kategori sebelumnya
+                const newName = req.body.name || previousName; // Menggunakan nilai baru jika ada, jika tidak, gunakan nama sebelumnya
+
+                category.name = newName; // Mengupdate nama kategori pada entitas category
+
+                category.save() // Menyimpan perubahan pada entitas category
+                    .then(() => {
+                        res.send({
+                            message: 'Category was updated successfully.',
+                        });
+                    })
+                    .catch(err => {
+                        res.status(500).send({
+                            message: `Error updating Category with id=${id}`,
+                        });
+                    });
             } else {
                 res.send({
-                    message: `Cannot update Category with id=${id}. Maybe Category was not found or req.body is empty!`,
+                    message: `Category with id=${id} was not found.`,
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: `Error updating Category with id=${id}`,
+                message: `Error retrieving Category with id=${id}`,
             });
         });
 });
+
 
 exports.delete = (authJwt.isAdmin, async (req, res) => {
     const id = req.params.id;

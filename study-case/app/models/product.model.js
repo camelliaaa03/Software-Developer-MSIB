@@ -1,4 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
+    
     const Product = sequelize.define('products', {
         id: {
             type: Sequelize.INTEGER,
@@ -15,8 +16,13 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING
         },
         expired : {
-            type: Sequelize.DATE
-        }
+            type: Sequelize.DATE,
+            allowNull: false,
+            // get() {
+            //     const date = this.getDataValue('expired');
+            //     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'numeric', year: 'numeric' });
+            // }
+        },
     });
 
     return Product;

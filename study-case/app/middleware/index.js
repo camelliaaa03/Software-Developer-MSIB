@@ -5,10 +5,9 @@ const category = require("../controllers/category.controller");
 const product = require("../controllers/product.controller");
 
 module.exports = {
-    authJwt,
-    verifySignUp,
-    auth,
-    authJwt,
-    category,
-    product
+  authJwt,
+  verifySignUp,
+  auth,
+  category,
+  product
 };

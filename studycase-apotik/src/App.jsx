@@ -1,9 +1,11 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Dashboard, Auth, Form } from "@/layouts";
-import { SignIn, SignUp } from "@/pages/auth";
-// import DaftarObat from "./pages/dashboard/daftarObat";
+// import {SignIn} from "@/pages/auth";
+import SignIn from "./pages/auth/sign-in";
+// import EditCategory from "@/pages/form/editCategory";
 
 function App() {
+  
   return (
     <Routes>
       <Route path="/dashboard/*" element={<Dashboard />} />
@@ -11,10 +13,9 @@ function App() {
       <Route path="/form/*" element={<Form />}/>
       <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
       <Route path="/auth/sign-in" element={<SignIn />} />
-      {/* <Route path="/form/produk" element={<Produk />} />
-      <Route path="/form/category" element={<Category />} />
-      <Route path="/form/formTransaksi" element={<FormTransaksi />} />
-      <Route path="/form/user" element={<User />} /> */}
+      
+      {/* <Route exact path="/form/editCategory" element={<EditCategory/>}/> */}
+
     </Routes>
   );
 }

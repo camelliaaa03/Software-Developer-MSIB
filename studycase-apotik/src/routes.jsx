@@ -1,16 +1,25 @@
-import {
-  HomeIcon,
-  TableCellsIcon,
-  ChartPieIcon,
-  ShieldCheckIcon,
-  UserGroupIcon,
-  ArrowLeftOnRectangleIcon,
-} from "@heroicons/react/24/solid";
-import { Home, DaftarObat, Kategori, Transaksi, Management } from "@/pages/dashboard";
-import { Produk, Category, FormTransaksi, User } from "@/pages/form";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { Navigate } from "react-router-dom";
+
+import { HomeIcon, TableCellsIcon, ChartPieIcon, ShieldCheckIcon, UserGroupIcon,  ArrowLeftOnRectangleIcon,} from "@heroicons/react/24/solid";
+import { Home, DaftarObat, Kategori, Transaksi } from "@/pages/dashboard";
+import { Produk, AddCategory, FormTransaksi, User, EditCategory, EditProduct } from "@/pages/form";
+
+import { logout } from "./actions/auth";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
+};
+
+const Logout = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(logout());
+  }, [dispatch]);
+
+  return <Navigate to="/auth/sign-in"/>;
 };
 
 export const routes = [
@@ -25,13 +34,13 @@ export const routes = [
       },
       {
         icon: <TableCellsIcon {...icon} />,
-        name: "Daftar Obat",
+        name: "Daftar Produk",
         path: "/daftarObat",
         element: <DaftarObat />,
       },
       {
         icon: <ChartPieIcon {...icon} />,
-        name: "Kategori Obat",
+        name: "Kategori Produk",
         path: "/kategori",
         element: <Kategori />,
       },
@@ -48,17 +57,17 @@ export const routes = [
     title: "Settings",
     layout: "dashboard",
     pages: [
-      {
-        icon: <UserGroupIcon {...icon} />,
-        name: "Manajemen User",
-        path: "/managementUser",
-        element: <Management />,
-      },
+      // {
+      //   icon: <UserGroupIcon {...icon} />,
+      //   name: "Manajemen User",
+      //   path: "/managementUser",
+      //   element: <Management />,
+      // },
       {
         icon: <ArrowLeftOnRectangleIcon {...icon} />,
         name: "Logout",
-        // path: "/",
-        // element: <DaftarObat />,
+        path: "/logout",
+        element: <Logout />,
       },
     ],
   },
@@ -71,8 +80,8 @@ export const routes = [
         element: <Produk />
       },
       {
-        path: "/category",
-        element: <Category />
+        path: "/addCategory",
+        element: <AddCategory />
       },
       {
         path: "/formTransaksi",
@@ -82,6 +91,14 @@ export const routes = [
         path: "/user",
         element: <User />
       },
+      {
+        path: "/editCategory",
+        element: <EditCategory />
+      },
+      {
+        path: "/editProduct",
+        element: <EditProduct />
+      }
     ],
   },
 ];

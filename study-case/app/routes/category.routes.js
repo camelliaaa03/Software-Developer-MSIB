@@ -5,19 +5,14 @@ module.exports = app => {
 
     const authJwt = require('../middleware/authJwt');
 
-    // Create a new Category
     router.post('/', [authJwt.verifyToken, authJwt.isAdmin], categories.create);
 
-    // Retrieve all categories
-    router.get('/', [authJwt.verifyToken], categories.findAll);
+    router.get('/',  categories.findAll);
 
-    // Retrieve a single Category with id
-    router.get('/:id', [authJwt.verifyToken, authJwt.isAdmin], categories.findOne);
+    router.get('/:id',  categories.findOne);
 
-    // Update a Category with id
     router.put('/:id', [authJwt.verifyToken, authJwt.isAdmin], categories.update);
 
-    // Delete a Category with id
     router.delete('/:id', [authJwt.verifyToken, authJwt.isAdmin], categories.delete);
 
     app.use('/api/categories', router);

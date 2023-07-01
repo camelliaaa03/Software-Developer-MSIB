@@ -1,32 +1,48 @@
-const dbConfig = require("../config/db.config.js");
+const config = require("../config/db.config.js");
 
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-    host: dbConfig.HOST,
-    dialect: dbConfig.dialect,
+const sequelize = new Sequelize(
+  config.DB,
+  config.USER,
+  config.PASSWORD,
+  {
+    host: config.HOST,
+    dialect: config.dialect,
     operatorsAliases: false,
 
     pool: {
-        max: dbConfig.pool.max,
-        min: dbConfig.pool.min,
-        acquire: dbConfig.pool.acquire,
-        idle: dbConfig.pool.idle
+      max: config.pool.max,
+      min: config.pool.min,
+      acquire: config.pool.acquire,
+      idle: config.pool.idle
     }
-});
+  }
+);
 
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.user = require("../models/user.model.js")(sequelize, Sequelize);
+db.role = require("../models/role.model.js")(sequelize, Sequelize);
+
 db.categories = require("./category.model.js")(sequelize, Sequelize);
 db.products = require("./product.model.js")(sequelize, Sequelize);
 
-db.user = require("../models/user.model")(sequelize, Sequelize);
-db.role = require("../models/role.model")(sequelize, Sequelize);
-
 db.cart = require("../models/cart.model")(sequelize, Sequelize);
 db.order = require("../models/order.model")(sequelize, Sequelize);
+
+db.role.belongsToMany(db.user, {
+  through: "user_roles",
+  foreignKey: "roleId",
+  otherKey: "userId"
+});
+db.user.belongsToMany(db.role, {
+  through: "user_roles",
+  foreignKey: "userId",
+  otherKey: "roleId"
+});
 
 db.categories.hasMany(db.products);
 
@@ -36,33 +52,17 @@ db.products.belongsTo(db.categories, {
 });
 
 db.cart.belongsTo(db.products, {
-    foreignKey: "productId",
+  foreignKey: "productId",
 });
 
 db.order.hasMany(db.products, {
-    foreignKey: "orderId",
+  foreignKey: "orderId",
 });
 
-// db.order.belongsTo(db.cart,{
-//     foreignKey: "orderId",
-// });
-
-// db.user.hasMany(db.order, {
-//     foreignKey: "userId",
-// });
-
-db.role.belongsToMany(db.user, {
-    through : "user_roles",
-    foreignKey: "roleId",
-    otherKey: "userId"
+db.order.belongsTo(db.cart, {
+  foreignKey: "orderId",
 });
 
-db.user.belongsToMany(db.role, {
-    through: "user_roles",
-    foreignKey: "userId",
-    otherKey: "roleId"
-});
-
-db.ROLES = ["admin", "kasir"]
+db.ROLES = ["admin", "kasir"];
 
 module.exports = db;

@@ -13,7 +13,7 @@ exports.create = (req, res) => {
     const produk = {
         name: req.body.name,
         harga: req.body.harga,
-        stok: req.body.stok,
+        description: req.body.description,
         expired: req.body.expired,
         categoryId: req.body.categoryId
     };
